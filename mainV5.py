@@ -16,11 +16,19 @@ while RUN:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             RUN = False
+
+        # Mouse click handling
         if event.type == pygame.MOUSEBUTTONDOWN:
             game.handleClick(event.pos)
+
+        # Keyboard handling
+        if event.type == pygame.KEYDOWN:
+            # Pass the character typed to handleKey
+            game.handleKey(event.unicode)
 
     game.checkGameOver()
     game.draw()
     pygame.display.update()
 
 pygame.quit()
+
