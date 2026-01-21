@@ -145,7 +145,7 @@ def page_options(screen, clock, options_manager):
                 cursor_music.manage_clic(event, pos)
                 cursor_effects.manage_clic(event, pos)
 
-                #soundg update 
+                #sound update 
                 pygame.mixer.music.set_volume(cursor_music.value / 100)
         
         btn_systeme.check_hover(pos)
@@ -162,7 +162,7 @@ def page_options(screen, clock, options_manager):
         
         police = pygame.font.Font(None, 40)
         if category == "systeme":
-            tittle_cat = police.render("window et Affichage", True, WHITE)
+            tittle_cat = police.render("Ecran et Affichage", True, WHITE)
             screen.blit(tittle_cat, (80, 160))
             Selector_res.draw(screen)
             switch_full_screen.draw(screen)
