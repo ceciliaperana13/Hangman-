@@ -62,7 +62,7 @@ class HangmanGame:
             self.reset()
             return
 
-        # Convert key to uppercase (buttons are uppercase)
+        # ConGREEN key to uppercase (buttons are uppercase)
         letter = key.upper()
 
         # Only accept letters A-Z
