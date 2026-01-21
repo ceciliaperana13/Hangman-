@@ -4,10 +4,13 @@ import math
 from options import Bouton, Curseur, BoutonSwitch, Selecteur, dessiner_potence, dessiner_titre
 
 pygame.init()
+pygame.mixer.init()
 
-# Constantes
-LARGEUR = 800
-HAUTEUR = 600
+# Charger musique
+pygame.mixer.music.load("main-menu/song/song_de_base.mp3")
+pygame.mixer.music.set_volume(0.5)  # 50% par défaut
+pygame.mixer.music.play(-1)
+
 FPS = 60
 
 # Couleurs
@@ -16,11 +19,10 @@ GRIS = (128, 128, 128)
 BLEU = (70, 130, 180)
 BLEU_CLAIR = (100, 160, 210)
 VERT = (46, 125, 50)
-VERT_CLAIR = (76, 175, 80)
 FOND = (30, 30, 50)
 
 # Fenêtre
-ecran = pygame.display.set_mode((LARGEUR, HAUTEUR))
+ecran = pygame.display.set_mode((800, 600))
 pygame.display.set_caption("Jeu du Pendu")
 horloge = pygame.time.Clock()
 
@@ -44,17 +46,11 @@ class GestionnaireOptions:
         self.volume_effets = effets
         self.plein_ecran = plein_ecran
         self.resolution = resolution
-        print(f"Options sauvegardées:")
-        print(f"  Musique: {self.volume_musique}%")
-        print(f"  Effets: {self.volume_effets}%")
-        print(f"  Plein écran: {self.plein_ecran}")
-        print(f"  Résolution: {self.resolution}")
-        
-        # Appliquer la résolution
         self.ecran = self.appliquer_resolution()
         return self.ecran
 
 
+#  MENU PRINCIPAL 
 def menu_principal(ecran, horloge, gestionnaire_options):
     boutons = [
         Bouton(250, 320, 300, 60, "JOUER", BLEU),
@@ -70,8 +66,7 @@ def menu_principal(ecran, horloge, gestionnaire_options):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
                 if boutons[0].est_clique(pos):
-                    print("Démarrage du jeu...")
-                    return "menu", ecran  # Changez en "jeu" quand prêt
+                    return "menu", ecran  
                 elif boutons[1].est_clique(pos):
                     return "options", ecran
                 elif boutons[2].est_clique(pos):
@@ -95,32 +90,21 @@ def menu_principal(ecran, horloge, gestionnaire_options):
         horloge.tick(FPS)
 
 
+# Options
 def page_options(ecran, horloge, gestionnaire_options):
-    # Boutons onglets
     btn_systeme = Bouton(50, 80, 180, 50, "SYSTÈME", BLEU)
     btn_son = Bouton(250, 80, 180, 50, "SON", GRIS)
     btn_retour = Bouton(300, 520, 200, 50, "RETOUR", VERT)
     
-    # Widgets système
     selecteur_res = Selecteur(
         400, 200, "Résolution:", 
         ['800x600', '1024x768', '1280x720', '1920x1080'], 
         gestionnaire_options.resolution
     )
-    switch_plein_ecran = BoutonSwitch(
-        400, 280, "Plein écran:", 
-        gestionnaire_options.plein_ecran
-    )
+    switch_plein_ecran = BoutonSwitch(400, 280, "Plein écran:", gestionnaire_options.plein_ecran)
     
-    # Widgets son
-    curseur_musique = Curseur(
-        400, 220, 250, "Musique:", 
-        gestionnaire_options.volume_musique
-    )
-    curseur_effets = Curseur(
-        400, 300, 250, "Effets:", 
-        gestionnaire_options.volume_effets
-    )
+    curseur_musique = Curseur(400, 220, 250, "Musique:", gestionnaire_options.volume_musique)
+    curseur_effets = Curseur(400, 300, 250, "Effets:", gestionnaire_options.volume_effets)
     
     categorie = "systeme"
     
@@ -133,13 +117,13 @@ def page_options(ecran, horloge, gestionnaire_options):
             
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if btn_retour.est_clique(pos):
-                    # Sauvegarde et application
                     ecran = gestionnaire_options.sauvegarder(
                         curseur_musique.valeur,
                         curseur_effets.valeur,
                         switch_plein_ecran.actif,
                         selecteur_res.obtenir_valeur()
                     )
+                    pygame.mixer.music.set_volume(curseur_musique.valeur / 100)
                     return "menu", ecran
                 
                 if btn_systeme.est_clique(pos):
@@ -159,15 +143,16 @@ def page_options(ecran, horloge, gestionnaire_options):
             if categorie == "son":
                 curseur_musique.gerer_clic(event, pos)
                 curseur_effets.gerer_clic(event, pos)
+
+                #Song update 
+                pygame.mixer.music.set_volume(curseur_musique.valeur / 100)
         
-        # Survol
         btn_systeme.verifier_survol(pos)
         btn_son.verifier_survol(pos)
         btn_retour.verifier_survol(pos)
         if categorie == "systeme":
             selecteur_res.verifier_survol(pos)
         
-        # Dessin
         ecran.fill(FOND)
         dessiner_titre(ecran, "OPTIONS", 40, BLANC)
         
@@ -187,11 +172,11 @@ def page_options(ecran, horloge, gestionnaire_options):
             curseur_effets.dessiner(ecran)
         
         btn_retour.dessiner(ecran)
-        
         pygame.display.flip()
         horloge.tick(FPS)
 
 
+#  MAIN 
 def main():
     gestionnaire_options = GestionnaireOptions(ecran)
     page = "menu"

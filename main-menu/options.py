@@ -48,24 +48,21 @@ class Curseur:
         self.mettre_a_jour()
     
     def mettre_a_jour(self):
+        self.valeur = max(0, min(self.valeur, 100))
         pos_x = self.x + int((self.valeur / 100) * self.largeur)
         self.rect_bouton.center = (pos_x, self.y)
     
     def dessiner(self, surface):
-        # Nom
         police = pygame.font.Font(None, 32)
         texte = police.render(self.nom, True, BLANC)
         surface.blit(texte, (self.x - 150, self.y - 10))
         
-        # Valeur
         valeur_texte = police.render(f"{self.valeur}%", True, BLANC)
         surface.blit(valeur_texte, (self.x + self.largeur + 20, self.y - 10))
         
-        # Barre
         pygame.draw.line(surface, GRIS, (self.x, self.y), (self.x + self.largeur, self.y), 4)
         pygame.draw.line(surface, BLEU, (self.x, self.y), (self.rect_bouton.centerx, self.y), 6)
         
-        # Bouton
         pygame.draw.rect(surface, BLEU_CLAIR, self.rect_bouton, border_radius=5)
         pygame.draw.rect(surface, BLANC, self.rect_bouton, 2, border_radius=5)
     
@@ -153,30 +150,24 @@ class Selecteur:
 
 
 def dessiner_potence(surface, x, y, balancement):
-    # Bases
     pygame.draw.rect(surface, MARRON, (x, y + 190, 40, 25))
     pygame.draw.rect(surface, MARRON_FONCE, (x, y + 190, 40, 25), 2)
     pygame.draw.rect(surface, MARRON, (x + 110, y + 190, 40, 25))
     pygame.draw.rect(surface, MARRON_FONCE, (x + 110, y + 190, 40, 25), 2)
     
-    # Poteaux
     pygame.draw.rect(surface, MARRON, (x + 15, y, 15, 195))
     pygame.draw.rect(surface, MARRON_FONCE, (x + 15, y, 15, 195), 2)
     pygame.draw.rect(surface, MARRON, (x + 120, y, 15, 195))
     pygame.draw.rect(surface, MARRON_FONCE, (x + 120, y, 15, 195), 2)
     
-    # Poutre
     pygame.draw.rect(surface, MARRON, (x + 30, y, 100, 15))
     pygame.draw.rect(surface, MARRON_FONCE, (x + 30, y, 100, 15), 2)
     
-    # Support
     pygame.draw.polygon(surface, MARRON_FONCE, [(x + 30, y + 15), (x + 30, y), (x + 60, y)])
     
-    # Corde
     corde_x = x + 90 + int(balancement * 10)
     pygame.draw.line(surface, (218, 165, 32), (x + 90, y + 15), (corde_x, y + 45), 3)
     
-    # Bonhomme
     pygame.draw.circle(surface, BLANC, (corde_x, y + 60), 15, 3)
     pygame.draw.line(surface, BLANC, (corde_x, y + 75), (corde_x, y + 125), 3)
     pygame.draw.line(surface, BLANC, (corde_x, y + 85), (corde_x - 20, y + 95), 3)
@@ -184,7 +175,6 @@ def dessiner_potence(surface, x, y, balancement):
     pygame.draw.line(surface, BLANC, (corde_x, y + 125), (corde_x - 15, y + 150), 3)
     pygame.draw.line(surface, BLANC, (corde_x, y + 125), (corde_x + 15, y + 150), 3)
     
-    # Plateforme
     pygame.draw.rect(surface, GRIS, (corde_x - 30, y + 155, 60, 8))
     pygame.draw.rect(surface, GRIS_CLAIR, (corde_x - 30, y + 155, 60, 8), 2)
 
