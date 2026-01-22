@@ -43,7 +43,7 @@ class HangmanGame:
         # Switch between normal and hard mode
         if self.difficulty == "normal":
             self.difficulty = "hard"
-            self.timeLimit = 45
+            self.timeLimit = 80
         else:
             self.difficulty = "normal"
             self.timeLimit = 90
