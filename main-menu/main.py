@@ -2,7 +2,10 @@ import pygame
 import sys
 import math
 import mainV5
+import score 
 from settings import button, cursor, buttonSwitch, Selector, draw_potence, draw_title
+import datetime
+
 
 
 pygame.init()
@@ -90,8 +93,7 @@ def main_menu(screen, clock, options_manager):
                     print("Open add words page...")
                     # return "add_word", screen
                 elif btn_scores.for_clic(pos):
-                    print("Display scoreboard...")
-                    # return "scores", screen
+                    return "scores", screen
         
         pos = pygame.mouse.get_pos()
         for btn in buttons:
@@ -215,16 +217,17 @@ def main():
     
     while True:
         if page == "menu":
-            page, screen_actuel = main_menu(screen_actuel, clock, options_manager)  # ✅ Ajout du 3ème paramètre
+            page, screen_actuel = main_menu(screen_actuel, clock, options_manager)  
 
         elif page == "options":
             page, screen_actuel = page_options(screen_actuel, clock, options_manager)
 
         elif page == "PLAY":
-            # ✅ Passer l'écran actuel à mainV5
             page = mainV5.main(screen_actuel)
-            # ✅ Restaurer la résolution après le jeu
             screen_actuel = options_manager.apply_resolution()
+            
+        elif page == "scores":
+            page, screen_actuel = score.page_scores(screen_actuel, clock) 
 
         elif page == "quitter":
             break

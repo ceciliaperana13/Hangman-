@@ -2,12 +2,9 @@ import pygame
 from game import HangmanGame
 from settings import SCREENWIDTH, SCREENHEIGHT
 
-
 def main(screen):
-    # ❌ SUPPRIMER cette ligne qui écrase la résolution
-    # screen = pygame.display.set_mode((SCREENWIDTH, SCREENHEIGHT))
-    
-    # ✅ Utiliser l'écran passé en paramètre
+    # Force the hangman's resolution
+    screen = pygame.display.set_mode((SCREENWIDTH, SCREENHEIGHT))
     pygame.display.set_caption("Hangman")
 
     clock = pygame.time.Clock()
@@ -25,10 +22,9 @@ def main(screen):
                 game.handleClick(event.pos)
 
             if event.type == pygame.KEYDOWN:
-                game.handleKey(event.unicode)
+                # Pass the whole event object to handleKey
+                game.handleKey(event)
 
         game.checkGameOver()
         game.draw()
         pygame.display.update()
-    
-    return "menu"  # ✅ Toujours retourner "menu"
