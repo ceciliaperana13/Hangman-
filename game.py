@@ -29,6 +29,9 @@ class HangmanGame:
         # Timer start
         self.startTime = pygame.time.get_ticks()
 
+        # Total penalty time in milliseconds
+        self.timePenalty = 0
+
     def chooseWord(self):
         # Choose word depending on difficulty
         if self.difficulty == "hard":
@@ -81,7 +84,7 @@ class HangmanGame:
 
                     # Time penalty in hard mode
                     if self.difficulty == "hard":
-                        self.startTime += 3000
+                        self.timePenalty += 3000  # add 3 seconds penalty
 
                 # Deactivate the button
                 button.active = False
@@ -114,15 +117,15 @@ class HangmanGame:
 
                         # Time penalty in hard mode
                         if self.difficulty == "hard":
-                            self.startTime += 3000
+                            self.timePenalty += 3000  # add 3 seconds penalty
 
                     # Deactivate the button
                     button.active = False
                     break
 
     def getTimeLeft(self):
-        # Calculate remaining time
-        elapsed = (pygame.time.get_ticks() - self.startTime) // 1000
+        # Calculate remaining time, include penalties
+        elapsed = (pygame.time.get_ticks() - self.startTime + self.timePenalty) // 1000
         return max(0, self.timeLimit - elapsed)
 
     def checkGameOver(self):
@@ -162,4 +165,5 @@ class HangmanGame:
                 (SCREENWIDTH // 2 - msg.get_width() // 2,
                  SCREENHEIGHT // 2),
             )
+
 
