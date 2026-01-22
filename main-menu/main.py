@@ -9,7 +9,7 @@ pygame.init()
 pygame.mixer.init()
 
 # load music
-pygame.mixer.music.load("./main-menu/song/song_de_base.mp3")
+pygame.mixer.music.load("./song/song_de_base.mp3")
 pygame.mixer.music.set_volume(0.5)  # 50% 
 pygame.mixer.music.play(-1)
 
