@@ -3,8 +3,9 @@ import sys
 import math
 import mainV5
 import score 
+import add_word
 from settings import button, cursor, buttonSwitch, Selector, draw_potence, draw_title
-import datetime
+
 
 
 
@@ -90,7 +91,7 @@ def main_menu(screen, clock, options_manager):
                 elif buttons[2].for_clic(pos):
                     return "quitter", screen
                 elif btn_add_word.for_clic(pos):
-                    print("Open add words page...")
+                    return "add_world",screen
                     # return "add_word", screen
                 elif btn_scores.for_clic(pos):
                     return "scores", screen
@@ -227,7 +228,10 @@ def main():
             screen_actuel = options_manager.apply_resolution()
             
         elif page == "scores":
-            page, screen_actuel = score.page_scores(screen_actuel, clock) 
+            page, screen_actuel = score.page_scores(screen_actuel, clock)
+
+        elif page == "add_world":
+            page, screen_actuel = add_word.add_word(screen_actuel, clock)
 
         elif page == "quitter":
             break
