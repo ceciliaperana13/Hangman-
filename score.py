@@ -4,10 +4,6 @@ import random
 pygame.init()
 pygame.mixer.init()
 
-pygame.mixer.music.load("music.mp3")
-pygame.mixer.music.set_volume(0.5)
-pygame.mixer.music.play(-1)
-
 win_sound = pygame.mixer.Sound("win.wav")
 lose_sound = pygame.mixer.Sound("lose.wav")
 
