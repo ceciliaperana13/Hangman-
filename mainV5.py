@@ -4,7 +4,7 @@ from settings import SCREENWIDTH, SCREENHEIGHT
 
 
 def main(screen):
-    # 🔹 Forcer la résolution du hangman
+    #  Force the hangman's resolution
     screen = pygame.display.set_mode((SCREENWIDTH, SCREENHEIGHT))
     pygame.display.set_caption("Hangman")
 
