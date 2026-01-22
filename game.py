@@ -35,9 +35,15 @@ class HangmanGame:
     def chooseWord(self):
         # Choose word depending on difficulty
         if self.difficulty == "hard":
-            longWords = [w for w in WORDLIST if len(w) >= 8]
+            longWords = [w for w in WORDLIST if len(w) >= 6]
+            if not longWords:
+             return random.choice(WORDLIST)
             return random.choice(longWords)
-        return random.choice(WORDLIST)
+        else:
+            shortWords = [w for w in WORDLIST if len(w) <= 5]
+            if not shortWords:
+                return random.choice(WORDLIST)
+            return random.choice(shortWords)
 
     def toggleDifficulty(self):
         # Switch between normal and hard mode
