@@ -2,9 +2,8 @@ import pygame
 from game import HangmanGame
 from settings import SCREENWIDTH, SCREENHEIGHT
 
-
 def main(screen):
-    #  Force the hangman's resolution
+    # Force the hangman's resolution
     screen = pygame.display.set_mode((SCREENWIDTH, SCREENHEIGHT))
     pygame.display.set_caption("Hangman")
 
@@ -23,11 +22,13 @@ def main(screen):
                 game.handleClick(event.pos)
 
             if event.type == pygame.KEYDOWN:
-                game.handleKey(event.unicode)
+                # Pass the whole event object to handleKey
+                game.handleKey(event)
 
         game.checkGameOver()
         game.draw()
         pygame.display.update()
+
 
 
 
