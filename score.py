@@ -1,119 +1,86 @@
 import pygame
 import random
+import datetime
 
 pygame.init()
-pygame.mixer.init()
 
-win_sound = pygame.mixer.Sound("/win.mp3")
-lose_sound = pygame.mixer.Sound("/lose.mp3")
+historique_parties = []
 
-WIDTH, HEIGHT = 800, 600
+WIDTH, HEIGHT = 600, 400
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Word Guess - History")
+pygame.display.set_caption("Historique des scores")
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
-RED = (200, 0, 0)
+GRAY = (200, 200, 200)
 GREEN = (0, 200, 0)
+RED = (200, 0, 0)
+BLUE = (0, 0, 200)
 
-font = pygame.font.Font(None, 40)
 
-words = ["KIT"]
+font = pygame.font.SysFont(None, 30)
 
-# tableau d'historique
-history = []
 
-try:
-    open("history.txt", "r").close()
-except:
-    open("history.txt", "w").close()
+historique = []
 
-def load_history():
-    with open("history.txt", "r") as f:
-        return [line.strip() for line in f if line.strip()]
 
-history = load_history()
+class Button:
+    def __init__(self, x, y, w, h, text, color, text_color=WHITE):
+        self.rect = pygame.Rect(x, y, w, h)
+        self.text = text
+        self.color = color
+        self.text_color = text_color
 
-def add_history(result):
-    history.append(result)
-    with open("history.txt", "a") as f:
-        f.write(result + "\n")
+    def draw(self, screen):
+        pygame.draw.rect(screen, self.color, self.rect)
+        txt = font.render(self.text, True, self.text_color)
+        txt_rect = txt.get_rect(center=self.rect.center)
+        screen.blit(txt, txt_rect)
 
-MAX_ERRORS = 6
+    def is_clicked(self, pos):
+        return self.rect.collidepoint(pos)
 
-def new_game():
-    return {
-        "word": random.choice(words),
-        "found_letters": set(),
-        "wrong_letters": set(),
-        "errors": 0
-    }
+add_button = Button(50, HEIGHT - 60, 200, 40, "Ajouter une partie", BLUE)
+quit_button = Button(350, HEIGHT - 60, 200, 40, "Quitter", RED)
 
-game = new_game()
 
-def draw_text(text, x, y, color=WHITE):
-    render = font.render(text, True, color)
-    screen.blit(render, (x, y))
+def ajouter_partie():
+    date = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    victoire = random.randint(0, 1)  # 0 ou 1
+    defaite = 1 - victoire
+    historique.append({"date": date, "victoire": victoire, "defaite": defaite})
 
-def draw_word():
-    display = ""
-    for letter in game["word"]:
-        if letter in game["found_letters"]:
-            display += letter + " "
-        else:
-            display += "_ "
-    draw_text(display, 250, 300)
 
-def check_win():
-    return all(l in game["found_letters"] for l in game["word"])
-
-clock = pygame.time.Clock()
 running = True
-
 while running:
-    clock.tick(60)
-    screen.fill(BLACK)
+    screen.fill(WHITE)
 
-    draw_word()
-    draw_text(f"Errors : {game['errors']} / {MAX_ERRORS}", 20, 20)
 
-    y = 450
-    draw_text("History:", 20, 400)
-    for result in history[-5:]:
-        color = GREEN if result == "WIN" else RED
-        draw_text(result, 20, y, color)
-        y += 30
+    pygame.draw.rect(screen, GRAY, (50, 50, 500, 250))
+
+    headers = ["Date", "Victoire", "Défaite"]
+    for i, header in enumerate(headers):
+        txt = font.render(header, True, BLACK)
+        screen.blit(txt, (60 + i*150, 60))
+
+
+    for j, entry in enumerate(historique[-8:]): 
+        screen.blit(font.render(entry["date"], True, BLACK), (60, 90 + j*30))
+        screen.blit(font.render(str(entry["victoire"]), True, GREEN), (210, 90 + j*30))
+        screen.blit(font.render(str(entry["defaite"]), True, RED), (360, 90 + j*30))
+
+
+    add_button.draw(screen)
+    quit_button.draw(screen)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-
-        if event.type == pygame.KEYDOWN:
-            letter = event.unicode.upper()
-
-            if len(letter) == 1 and "A" <= letter <= "Z":
-                if letter in game["word"]:
-                    game["found_letters"].add(letter)
-                else:
-                    if letter not in game["wrong_letters"]:
-                        game["wrong_letters"].add(letter)
-                        game["errors"] += 1
-# pour la victoire
-    if check_win():
-        win_sound.play()
-        draw_text("YOU WIN!", 300, 350, GREEN)
-        pygame.display.flip()
-        pygame.time.delay(1500)
-        add_history("WIN")
-        game = new_game()
-# pour la defaite
-    if game["errors"] >= MAX_ERRORS:
-        lose_sound.play()
-        draw_text(f"YOU LOSE! Word: {game['word']}", 230, 350, RED)
-        pygame.display.flip()
-        pygame.time.delay(1500)
-        add_history("LOSE")
-        game = new_game()
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if add_button.is_clicked(event.pos):
+                ajouter_partie()
+            elif quit_button.is_clicked(event.pos):
+                running = False
 
     pygame.display.flip()
 
