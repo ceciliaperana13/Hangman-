@@ -1,34 +1,33 @@
 import pygame
-from settings import SCREENWIDTH, SCREENHEIGHT
 from game import HangmanGame
+from settings import SCREENWIDTH, SCREENHEIGHT
 
-pygame.init()
-screen = pygame.display.set_mode((SCREENWIDTH, SCREENHEIGHT))
-pygame.display.set_caption("Hangman")
 
-game = HangmanGame(screen)
-clock = pygame.time.Clock()
-RUN = True
+def main(screen):
+    # 🔹 Forcer la résolution du hangman
+    screen = pygame.display.set_mode((SCREENWIDTH, SCREENHEIGHT))
+    pygame.display.set_caption("Hangman")
 
-while RUN:
-    clock.tick(60)
+    clock = pygame.time.Clock()
+    game = HangmanGame(screen)
+    RUN = True
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            RUN = False
+    while RUN:
+        clock.tick(60)
 
-        # Mouse click handling
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            game.handleClick(event.pos)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return "menu"
 
-        # Keyboard handling
-        if event.type == pygame.KEYDOWN:
-            # Pass the character typed to handleKey
-            game.handleKey(event.unicode)
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                game.handleClick(event.pos)
 
-    game.checkGameOver()
-    game.draw()
-    pygame.display.update()
+            if event.type == pygame.KEYDOWN:
+                game.handleKey(event.unicode)
 
-pygame.quit()
+        game.checkGameOver()
+        game.draw()
+        pygame.display.update()
+
+
 
