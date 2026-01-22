@@ -1,6 +1,7 @@
 import pygame
 import sys
 import math
+import add_word
 import mainV5
 from settings import button, cursor, buttonSwitch, Selector, draw_potence, draw_title
 
@@ -87,11 +88,10 @@ def main_menu(screen, clock, options_manager):
                 elif buttons[2].for_clic(pos):
                     return "quitter", screen
                 elif btn_add_word.for_clic(pos):
-                    print("Open add words page...")
+                    return "add_world",screen
                     # return "add_word", screen
                 elif btn_scores.for_clic(pos):
-                    print("Display scoreboard...")
-                    # return "scores", screen
+                    return "scores", screen
         
         pos = pygame.mouse.get_pos()
         for btn in buttons:
@@ -225,6 +225,11 @@ def main():
             page = mainV5.main(screen_actuel)
             #  Restore resolution after the game
             screen_actuel = options_manager.apply_resolution()
+        elif page == "scores":
+            page, screen_actuel = score.page_scores(screen_actuel, clock)
+
+        elif page == "add_world":
+            page, screen_actuel = add_word.add_word(screen_actuel, clock)    
 
         elif page == "quitter":
             break
