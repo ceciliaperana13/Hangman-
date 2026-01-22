@@ -1,28 +1,26 @@
 import pygame
 import os
 
-
-score = []
+scores = []
 
 if not os.path.exists("score.txt"):
     open("score.txt", "w").close()
 
-def charger_historique():
+def load_history():
     with open("score.txt", "r") as f:
-        return [ligne.strip() for ligne in f if ligne.strip()]
+        return [line.strip() for line in f if line.strip()]
 
-def ajouter_historique(resultat):
-    score.append(resultat)
+def add_to_history(result):
+    scores.append(result)
     with open("score.txt", "a") as f:
-        f.write(resultat + "\n")
+        f.write(result + "\n")
 
-score = charger_historique()
+scores = load_history()
 
+print("score at startup:", scores)
 
-print("score au démarrage :", score)
+add_to_history("WIN")
+add_to_history("LOSE")
+add_to_history("WIN")
 
-ajouter_historique("WIN")
-ajouter_historique("LOSE")
-ajouter_historique("WIN")
-
-print("score après ajout :", score)
+print("score after adding:", scores)
