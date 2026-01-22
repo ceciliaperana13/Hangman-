@@ -20,6 +20,7 @@ font = pygame.font.Font(None, 40)
 
 words = ["KIT"]
 
+# tableau d'historique
 history = []
 
 try:
@@ -97,7 +98,7 @@ while running:
                     if letter not in game["wrong_letters"]:
                         game["wrong_letters"].add(letter)
                         game["errors"] += 1
-
+# pour la victoire
     if check_win():
         win_sound.play()
         draw_text("YOU WIN!", 300, 350, GREEN)
@@ -105,7 +106,7 @@ while running:
         pygame.time.delay(1500)
         add_history("WIN")
         game = new_game()
-
+# pour la defaite
     if game["errors"] >= MAX_ERRORS:
         lose_sound.play()
         draw_text(f"YOU LOSE! Word: {game['word']}", 230, 350, RED)
