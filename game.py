@@ -9,7 +9,6 @@ WORDLIST = loadWords()
 class HangmanGame:
     def __init__(self, screen):
         self.screen = screen
-        self.winStreak = 0
         self.reset()
 
     def reset(self):
@@ -83,10 +82,8 @@ class HangmanGame:
     def checkGameOver(self):
         # Check if the player has won or lost
         if "".join(self.guessWord) == self.chosenWord:
-            self.winStreak += 1
             self.gameOver = True
         elif self.numberOfGuesses >= 6:
-            self.winStreak = 0
             self.gameOver = True
 
     def draw(self):
@@ -99,10 +96,6 @@ class HangmanGame:
 
         for button in self.buttons:
             button.draw(self.screen, mouse_pos)
-
-        # Display win streak
-        streak = drawLetters(f"Winning Streak : {self.winStreak}")
-        self.screen.blit(streak, (SCREENWIDTH - 300, 100))
 
         # Game over message
         if self.gameOver:
