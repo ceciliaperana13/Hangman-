@@ -4,8 +4,8 @@ import random
 pygame.init()
 pygame.mixer.init()
 
-win_sound = pygame.mixer.Sound("win.wav")
-lose_sound = pygame.mixer.Sound("lose.wav")
+win_sound = pygame.mixer.Sound("/win.mp3")
+lose_sound = pygame.mixer.Sound("/lose.mp3")
 
 WIDTH, HEIGHT = 800, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
