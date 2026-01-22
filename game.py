@@ -39,7 +39,7 @@ class HangmanGame:
             if not longWords:
              return random.choice(WORDLIST)
             return random.choice(longWords)
-        else:
+        else: #mode normal
             shortWords = [w for w in WORDLIST if len(w) <= 5]
             if not shortWords:
                 return random.choice(WORDLIST)
