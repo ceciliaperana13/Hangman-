@@ -11,7 +11,7 @@ def ask_player_name(screen, clock):
     font_instruction = pygame.font.Font(None, 36)
     font_input = pygame.font.Font(None, 64)
     
-    # Dimensions de la boîte d'input
+    # Dimensions  boîte d'input
     input_box = pygame.Rect(SCREENWIDTH // 2 - 200, SCREENHEIGHT // 2 - 35, 400, 70)
     
     while input_active:
@@ -35,7 +35,7 @@ def ask_player_name(screen, clock):
                     if len(player_name) < 15:
                         player_name += event.unicode
         
-        # Dessiner l'écran
+        
         screen.fill(BLACK)
         
         # Titre
@@ -75,12 +75,12 @@ def ask_player_name(screen, clock):
         pygame.display.flip()
         clock.tick(60)
     
-    return "Player"  # Nom par défaut si aucun n'est saisi
+    return "Player"  
 
 
 def main(screen):
     """Fonction principale du jeu Hangman"""
-    # Force the hangman's resolution
+    
     screen = pygame.display.set_mode((SCREENWIDTH, SCREENHEIGHT))
     pygame.display.set_caption("Hangman")
 
