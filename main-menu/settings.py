@@ -3,10 +3,8 @@ import pygame
 SCREENWIDTH = 800
 SCREENHEIGHT = 640
 
-WHITE = (255, 255, 255)
-RED = (255, 0, 0)
-BLACK = (0, 0, 0)
-GRAY = (80, 80, 80)
+
+
 
 pygame.font.init()
 FONT = pygame.font.SysFont("Comic Sans MS", 22)
@@ -21,6 +19,9 @@ BROWN_DARK = (101, 67, 33)
 BLUE = (70, 130, 180)
 BLUE_LIGTH = (100, 160, 210)
 GREEN = (46, 125, 50)
+RED = (255, 0, 0)
+BLACK = (0, 0, 0)
+
 
 
 class button:

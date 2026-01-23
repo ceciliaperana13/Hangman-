@@ -3,6 +3,7 @@ import pygame
 from settings import BLACK, SCREENWIDTH, SCREENHEIGHT
 from utils import drawLetterLines, drawHangman, drawLetters, loadWords
 from buttons import HangmanButton
+from score import add_score  # Import de la fonction add_score
 
 WORDLIST = loadWords()
 
@@ -10,13 +11,23 @@ class HangmanGame:
     def __init__(self, screen):
         self.screen = screen
 
-        # Game difficulty ("normal" or "hard")
+        
         self.difficulty = "normal"
 
-        # Time limit depending on difficulty
+        
         self.timeLimit = 90
 
+        # Player name
+        self.player_name = "Player"
+        
+        # Flag to track if score was already saved
+        self.score_saved = False
+
         self.reset()
+
+    def set_player_name(self, name):
+        """Définit le nom du joueur"""
+        self.player_name = name if name.strip() else "Player"
 
     def reset(self):
         # Pick a new random word and reset game values
@@ -24,6 +35,7 @@ class HangmanGame:
         self.guessWord = [" " for _ in self.chosenWord]
         self.numberOfGuesses = 0
         self.gameOver = False
+        self.score_saved = False  # Reset du flag de sauvegarde
         self.createAlphabet()
 
         # Timer start
@@ -127,12 +139,37 @@ class HangmanGame:
 
     def checkGameOver(self):
         # Check if the player has won or lost
-        if "".join(self.guessWord) == self.chosenWord:
+        won = "".join(self.guessWord) == self.chosenWord
+        lost_hangman = self.numberOfGuesses >= 6
+        lost_time = self.getTimeLeft() <= 0
+
+        if won and not self.score_saved:
+            # VICTOIRE : Sauvegarder le score
             self.gameOver = True
-        elif self.numberOfGuesses >= 6:
+            max_attempts = 6
+            add_score(
+                player_name=self.player_name,
+                word=self.chosenWord,
+                result="WIN",
+                attempts=self.numberOfGuesses,
+                max_attempts=max_attempts
+            )
+            self.score_saved = True
+            print(f" VICTOIRE ! Score enregistré pour {self.player_name}")
+
+        elif (lost_hangman or lost_time) and not self.score_saved:
+            # DÉFAITE : Sauvegarder le score
             self.gameOver = True
-        elif self.getTimeLeft() <= 0:
-            self.gameOver = True
+            max_attempts = 6
+            add_score(
+                player_name=self.player_name,
+                word=self.chosenWord,
+                result="LOSE",
+                attempts=self.numberOfGuesses,
+                max_attempts=max_attempts
+            )
+            self.score_saved = True
+            print(f" DÉFAITE ! Score enregistré pour {self.player_name}")
 
     def draw(self):
         # Draw everything on the screen
@@ -154,11 +191,42 @@ class HangmanGame:
         mode_text = font.render(f"Mode : {self.difficulty.upper()}", True, (255, 255, 255))
         self.screen.blit(mode_text, (SCREENWIDTH - mode_text.get_width() - 20, 50))
 
+        # Draw player name
+        player_text = font.render(f"Player : {self.player_name}", True, (255, 255, 255))
+        self.screen.blit(player_text, (20, 20))
+
         # Game over message
         if self.gameOver:
+            # Afficher si victoire ou défaite
+            if "".join(self.guessWord) == self.chosenWord:
+                result_msg = drawLetters("YOU WIN!")
+                result_color = (0, 255, 0)  # Vert
+            else:
+                result_msg = drawLetters("YOU LOSE!")
+                result_color = (255, 0, 0)  # Rouge
+                # Afficher le mot correct
+                word_msg = drawLetters(f"Word was: {self.chosenWord}")
+                self.screen.blit(
+                    word_msg,
+                    (SCREENWIDTH // 2 - word_msg.get_width() // 2,
+                     SCREENHEIGHT // 2 - 40),
+                )
+            
+            # Afficher résultat en couleur
+            result_surface = pygame.font.Font(None, 72).render(
+                "YOU WIN!" if "".join(self.guessWord) == self.chosenWord else "YOU LOSE!",
+                True, result_color
+            )
+            self.screen.blit(
+                result_surface,
+                (SCREENWIDTH // 2 - result_surface.get_width() // 2,
+                 SCREENHEIGHT // 2 - 80),
+            )
+
+            # Message pour redémarrer
             msg = drawLetters("Click or press key to restart")
             self.screen.blit(
                 msg,
                 (SCREENWIDTH // 2 - msg.get_width() // 2,
-                 SCREENHEIGHT // 2),
+                 SCREENHEIGHT // 2 + 40),
             )

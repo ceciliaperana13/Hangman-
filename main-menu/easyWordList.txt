@@ -21,3 +21,6 @@ valeur, vendre, venir, vent, vérité, vie, village, visiter, voir, voix, voler,
 week-end,
 yeux,
 zéro, zone, zoo
+
+
+

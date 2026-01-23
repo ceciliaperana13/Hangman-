@@ -1,6 +1,4 @@
 import pygame
-import json
-import os
 from datetime import datetime
 from settings import button, draw_title
 
@@ -17,20 +15,47 @@ SCORES_FILE = "scores.txt"
 
 def load_scores():
     """Charge les scores depuis le fichier scores.txt"""
-    if not os.path.exists(SCORES_FILE):
-        return []
-    
     try:
         with open(SCORES_FILE, "r", encoding="utf-8") as f:
-            scores = json.load(f)
+            scores = []
+            for line in f:
+                line = line.strip()
+                if line:
+                    parts = line.split("|")
+                    if len(parts) >= 7:
+                        score_entry = {
+                            "player": parts[0],
+                            "word": parts[1],
+                            "result": parts[2],
+                            "score": int(parts[3]),
+                            "attempts": int(parts[4]),
+                            "max_attempts": int(parts[5]),
+                            "date": parts[6],
+                            "timestamp": float(parts[7]) if len(parts) > 7 else 0
+                        }
+                        scores.append(score_entry)
             return scores
-    except (json.JSONDecodeError, FileNotFoundError):
+    except FileNotFoundError:
+        return []
+    except Exception as e:
+        print(f" Erreur lors du chargement: {e}")
         return []
 
 
-def save_score(player_name, word, result, attempts, max_attempts):
+def save_all_scores(scores):
+    """Sauvegarde tous les scores dans le fichier"""
+    try:
+        with open(SCORES_FILE, "w", encoding="utf-8") as f:
+            for score in scores:
+                line = f"{score['player']}|{score['word']}|{score['result']}|{score['score']}|{score['attempts']}|{score['max_attempts']}|{score['date']}|{score['timestamp']}\n"
+                f.write(line)
+    except Exception as e:
+        print(f" Erreur lors de la sauvegarde: {e}")
+
+
+def add_score(player_name, word, result, attempts, max_attempts):
     """
-    Sauvegarde un nouveau score dans scores.txt
+    Ajoute un nouveau score à scores.txt
     
     Args:
         player_name: Nom du joueur
@@ -63,28 +88,36 @@ def save_score(player_name, word, result, attempts, max_attempts):
     # Trier par score décroissant, puis par date
     scores.sort(key=lambda x: (-x["score"], -x["timestamp"]))
     
+    # Sauvegarder dans le fichier
+    save_all_scores(scores)
+    
+    print(f" Score sauvegardé: {player_name} - {result} - {score_value} points")
+
+
+def clear_scores():
+    """Efface tous les scores du fichier"""
     try:
         with open(SCORES_FILE, "w", encoding="utf-8") as f:
-            json.dump(scores, f, indent=4, ensure_ascii=False)
-        print(f" Score sauvegardé: {player_name} - {result} - {score_value} points")
+            f.write("")
+        print(" Scores effacés")
     except Exception as e:
-        print(f" Erreur lors de la sauvegarde: {e}")
+        print(f" Erreur lors de l'effacement: {e}")
 
 
 def page_scores(screen, clock):
-    """Affiche l'historique des scores"""
+    """Affiche l'historique des scores en temps réel depuis scores.txt"""
     
     btn_return = button(300, 520, 200, 50, "RETURN", GREEN)
     btn_clear = button(100, 520, 180, 50, "CLEAR ALL", RED)
     
-    # Charger les scores depuis le fichier
-    scores_data = load_scores()
-    
     scroll_offset = 0
-    max_scroll = max(0, len(scores_data) * 40 - 300)
     
     while True:
         pos = pygame.mouse.get_pos()
+        
+        # Recharger les scores depuis le fichier à chaque frame
+        scores_data = load_scores()
+        max_scroll = max(0, len(scores_data) * 35 - 300)
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -95,11 +128,7 @@ def page_scores(screen, clock):
                     return "menu", screen
                 
                 if btn_clear.for_clic(pos):
-                    # Confirmation avant suppression
-                    if os.path.exists(SCORES_FILE):
-                        os.remove(SCORES_FILE)
-                        scores_data = []
-                        print("🗑️ Scores effacés")
+                    clear_scores()
             
             # Scroll avec la molette
             if event.type == pygame.MOUSEWHEEL:
@@ -141,9 +170,6 @@ def page_scores(screen, clock):
             pygame.draw.line(screen, WHITE, (20, y_offset), (780, y_offset), 2)
             y_offset += 10
             
-            # Zone de clipping pour le scroll
-            clip_rect = pygame.Rect(0, y_offset, screen.get_width(), 300)
-            
             # Afficher chaque score
             for i, score_entry in enumerate(scores_data):
                 item_y = y_offset + (i * 35) - scroll_offset
@@ -179,3 +205,6 @@ def page_scores(screen, clock):
         btn_return.draw(screen)
         pygame.display.flip()
         clock.tick(60)
+    
+    # Retour de sécurité 
+    return "menu", screen

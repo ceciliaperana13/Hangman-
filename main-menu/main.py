@@ -7,8 +7,6 @@ import add_word
 from settings import button, cursor, buttonSwitch, Selector, draw_potence, draw_title
 
 
-
-
 pygame.init()
 pygame.mixer.init()
 
@@ -91,8 +89,8 @@ def main_menu(screen, clock, options_manager):
                 elif buttons[2].for_clic(pos):
                     return "quitter", screen
                 elif btn_add_word.for_clic(pos):
-                    return "add_world",screen
-                    # return "add_word", screen
+                    return "add_world", screen
+                    
                 elif btn_scores.for_clic(pos):
                     return "scores", screen
         
@@ -209,8 +207,6 @@ def page_options(screen, clock, options_manager):
         clock.tick(FPS)
 
 
-
-
 def main():
     options_manager = ManageOptions(screen)
     page = "menu"
@@ -228,6 +224,7 @@ def main():
             screen_actuel = options_manager.apply_resolution()
             
         elif page == "scores":
+           
             page, screen_actuel = score.page_scores(screen_actuel, clock)
 
         elif page == "add_world":
