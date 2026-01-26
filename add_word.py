@@ -13,22 +13,22 @@ FPS = 60
 
 
 def save_words(text, filename="easyWordList.txt"):
-    """Ajoute un ou plusieurs mots séparés par des virgules"""
+    """Add one or multiple words separated by commas"""
     try:
-        # Lire les mots existants
+        # Read existing words from file
         try:
             with open(filename, 'r', encoding='utf-8') as f:
                 existing = [line.strip().lower() for line in f]
         except:
             existing = []
         
-        # Séparer par virgules
+        # Split input text by commas
         words = [w.strip() for w in text.split(',') if w.strip()]
         
         if not words:
             return False, "Enter a word!"
         
-        # Ajouter les nouveaux
+        # Add only new words
         added = []
         for word in words:
             if word.lower() not in existing:
@@ -36,6 +36,7 @@ def save_words(text, filename="easyWordList.txt"):
                 existing.append(word.lower())
         
         if added:
+            # Append new words to the file
             with open(filename, 'a', encoding='utf-8') as f:
                 for word in added:
                     f.write(word + '\n')
@@ -47,14 +48,14 @@ def save_words(text, filename="easyWordList.txt"):
 
 
 def add_word(screen, clock):
-    """Page simple pour ajouter des mots"""
+    """Simple page to add words"""
     w, h = screen.get_width(), screen.get_height()
     
-    # Boutons
+    # Buttons
     btn_add = button(w//2 - 110, h//2 + 80, 220, 60, "ADD", GREEN)
     btn_return = button(w//2 - 110, h - 100, 220, 60, "RETURN", BLUE)
     
-    # Zone de texte
+    # Text input box
     input_rect = pygame.Rect(w//2 - 300, h//2 - 30, 600, 70)
     text = ''
     active = False
@@ -71,10 +72,10 @@ def add_word(screen, clock):
                 return "quitter", screen
             
             if event.type == pygame.MOUSEBUTTONDOWN:
-                # Clic sur input
+                # Click on input box
                 active = input_rect.collidepoint(pos)
                 
-                # Bouton ADD
+                # ADD button
                 if btn_add.for_clic(pos) and text.strip():
                     success, msg = save_words(text)
                     message = msg
@@ -83,10 +84,9 @@ def add_word(screen, clock):
                     if success:
                         text = ''
                 
-                # Bouton RETURN
+                # RETURN button
                 if btn_return.for_clic(pos):
                     return "menu", screen
-            
             
             if event.type == pygame.KEYDOWN and active:
                 if event.key == pygame.K_BACKSPACE:
@@ -98,29 +98,34 @@ def add_word(screen, clock):
                     msg_timer = 120
                     if success:
                         text = ''
-                elif len(text) < 80:  # Limite de caractères
+                elif len(text) < 80:  # Character limit
                     if event.unicode.isalpha() or event.unicode in ' ,-\'éèêàùç':
                         text += event.unicode
         
-        # Hover
+        # Hover effect
         btn_add.check_hover(pos)
         btn_return.check_hover(pos)
         
+        # Message timer
         if msg_timer > 0:
             msg_timer -= 1
             if msg_timer == 0:
                 message = ""
         
-        # Dessiner
+        # Draw everything
         screen.fill(FOND)
         draw_title(screen, "ADD WORDS", 50, WHITE)
         
-        # Instructions
+        # Instructions text
         font = pygame.font.Font(None, 28)
-        txt = font.render("Separate multiple words with commas (ex: cat, dog, fish)", True, GRAY)
+        txt = font.render(
+            "Separate multiple words with commas (ex: cat, dog, fish)",
+            True,
+            GRAY
+        )
         screen.blit(txt, (w//2 - txt.get_width()//2, h//2 - 100))
         
-        
+        # Input box
         color = BLUE if active else GRAY
         pygame.draw.rect(screen, (50, 50, 70), input_rect)
         pygame.draw.rect(screen, color, input_rect, 3)
@@ -129,15 +134,18 @@ def add_word(screen, clock):
         txt_surface = font_input.render(text, True, WHITE)
         screen.blit(txt_surface, (input_rect.x + 10, input_rect.y + 20))
         
-        
+        # Draw buttons
         btn_add.draw(screen)
         btn_return.draw(screen)
         
-        # Message
+        # Feedback message
         if message:
             font_msg = pygame.font.Font(None, 32)
             msg_surf = font_msg.render(message, True, msg_color)
-            screen.blit(msg_surf, (w//2 - msg_surf.get_width()//2, h//2 + 160))
+            screen.blit(
+                msg_surf,
+                (w//2 - msg_surf.get_width()//2, h//2 + 160)
+            )
         
         pygame.display.flip()
         clock.tick(FPS)
