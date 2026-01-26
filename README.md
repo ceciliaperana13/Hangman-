@@ -3,9 +3,9 @@ Le dessin une fois terminé montre une scène d'exécution par pendaison dans la
 
 Main-Menu
 
-[Screenshot](./image/slide_front1.png)
+[Screenshot](../image/slide_front1.png)
 
 
 Game
 
-![Screenshot](./image/slide_front2.png)
+![Screenshot](../image/slide_front2.png)
